@@ -66,7 +66,29 @@
             position: relative;
             z-index: 2;
         }
-
+        /* 古风图片样式 */
+        .romantic-img {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .romantic-img img {
+            width: 100%;
+            max-height: 200px;       /* 限制高度，不拉长卡片 */
+            object-fit: cover;
+            object-position: center;
+            border-radius: 32px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            /* 可选：加轻微复古色调 */
+            filter: sepia(10%) brightness(1.02) contrast(1.05);
+        }
+        /* 手机竖屏下稍微减小高度 */
+        @media (max-width: 550px) {
+            .romantic-img img {
+                max-height: 160px;
+                border-radius: 24px;
+            }
+        }
+      
         h1 {
             font-size: 2.2rem;
             background: linear-gradient(135deg, #d14b6e, #ff8c9e);
@@ -160,6 +182,9 @@
 <body>
 <div class="floating-hearts" id="floatingHearts"></div>
 <div class="card">
+    <div class="romantic-img">
+    <img src="你的图片链接.jpg" alt="古风恋恋">
+    </div>
     <h1>❤️ 我们的心动纪念日 ❤️</h1>
     <div class="days-number" id="totalDays">✨</div>
     <div class="days-label">睿❤瑞</div>
