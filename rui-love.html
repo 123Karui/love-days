@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>❤️ 我们的纪念日 · 每日情诗</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { min-height:100vh; background: linear-gradient(135deg,#ff9a9e 0%,#fecfef 50%,#ffe6f0 100%); font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', sans-serif; padding:20px; position:relative; overflow-x:hidden; }
+        .floating-hearts { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+        .heart { position:absolute; font-size:20px; color:rgba(255,80,120,0.3); animation:floatHeart linear infinite; bottom:-50px; }
+        @keyframes floatHeart { 0% { transform:translateY(0) rotate(0deg); opacity:0.6; } 100% { transform:translateY(-110vh) rotate(360deg); opacity:0; } }
+        .container { max-width:650px; margin:0 auto; background:rgba(255,255,255,0.92); border-radius:48px; box-shadow:0 25px 45px rgba(0,0,0,0.2); backdrop-filter:blur(2px); padding:30px 25px 45px; position:relative; z-index:2; }
+        .header { text-align:center; margin-bottom:25px; }
+        .couple-icon { font-size:60px; }
+        h1 { font-size:2.3rem; background:linear-gradient(135deg,#d14b6e,#ff8c9e); background-clip:text; -webkit-background-clip:text; color:transparent; margin:10px 0 5px; }
+        .sub { color:#c06c7a; font-size:0.9rem; border-top:1px solid #ffccd5; display:inline-block; padding-top:5px; }
+        .days-card { background:#fff0f3; border-radius:60px; padding:20px; margin:20px 0; text-align:center; box-shadow:0 8px 20px rgba(209,75,94,0.15); border:1px solid #ffe0e7; }
+        .days-number { font-size:4rem; font-weight:bold; color:#e35f7a; line-height:1; margin:5px 0; text-shadow:2px 2px 10px #ffb7c3; }
+        .days-label { font-size:1.2rem; color:#a54c5f; letter-spacing:2px; }
+        .event-date { margin-top:12px; color:#c0828f; font-size:0.9rem; }
+        .poem-section { background:#fffafc; border-radius:40px; padding:20px; margin:25px 0; border-left:8px solid #ff92ab; box-shadow:0 5px 12px rgba(0,0,0,0.05); }
+        .poem-title { font-size:1rem; color:#d1627c; display:flex; align-items:center; gap:8px; margin-bottom:15px; }
+        .poem-content { font-size:1.15rem; line-height:1.65; color:#2d2d2d; text-align:center; white-space:pre-line; }
+        .poem-author { text-align:right; margin-top:15px; color:#b27c88; font-size:0.85rem; border-top:1px dashed #ffe2e9; padding-top:10px; }
+        .settings { background:#fff5f7; border-radius:50px; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:15px; font-size:0.85rem; color:#c27485; }
+        .reset-btn { background:#ffb7c5; border:none; padding:6px 14px; border-radius:40px; color:#8f414f; cursor:pointer; font-size:0.8rem; transition:0.2s; font-weight:bold; }
+        .reset-btn:hover { background:#ff92ab; color:white; transform:scale(0.97); }
+        footer { text-align:center; margin-top:25px; font-size:0.7rem; color:#c48b98; }
+        @media (max-width:500px) { .days-number { font-size:3rem; } .poem-content { font-size:1rem; } }
+    </style>
+</head>
+<body>
+<div class="floating-hearts" id="floatingHearts"></div>
+<div class="container">
+    <div class="header">
+        <div class="couple-icon">👩‍❤️‍👨</div>
+        <h1>我们的心动纪念日</h1>
+        <div class="sub">✨ 每一天都值得庆祝 ✨</div>
+    </div>
+    <div class="days-card">
+        <div class="days-number" id="totalDays">--</div>
+        <div class="days-label">❤️ 相爱的日子 ❤️</div>
+        <div class="event-date" id="nextEvent">📅 计算中...</div>
+    </div>
+    <div class="poem-section">
+        <div class="poem-title"><span>🌸</span> 今日 · 为你写诗 <span>🌸</span></div>
+        <div class="poem-content" id="dailyPoem">遇见你，是我这一生最温柔的奇迹。</div>
+        <div class="poem-author" id="poemAuthor">—— 来自心间的句子</div>
+    </div>
+    <div class="settings">
+        <span>💌 每日随机情诗 · 爱你不止一天</span>
+        <button class="reset-btn" id="resetDemoBtn">🎂 修改纪念日</button>
+    </div>
+    <footer>🌟 每天打开都有新诗句 &nbsp;&nbsp;|&nbsp;&nbsp; 与你朝朝暮暮</footer>
+</div>
+<script>
+    // ================= 请在下面修改为你们的恋爱开始日期 =================
+    const START_DATE = new Date(2026, 1, 2);   // 格式：年, 月-1, 日 (例如 2022年6月18日)
+
+    // 诗句库（共60首，语法完全正确，无多余逗号或括号）
+    const POEM_LIBRARY = [
+        { text: "你是我的半截的诗，不许别人更改一个字。", author: "—— 海子" },
+        { text: "我想和你一起生活，在某个小镇，共享无尽的黄昏，和绵绵不绝的钟声。", author: "—— 茨维塔耶娃" },
+        { text: "一想到你，我这张丑脸上就泛起微笑。", author: "—— 王小波" },
+        { text: "你是我温暖的手套，冰冷的啤酒，带着阳光味道的衬衫，日复一日的梦想。", author: "—— 廖一梅《恋爱的犀牛》" },
+        { text: "今夜我不关心人类，我只想你。", author: "—— 海子" },
+        { text: "月色与雪色之间，你是第三种绝色。", author: "—— 余光中" },
+        { text: "我行过许多地方的桥，看过许多次数的云，喝过许多种类的酒，却只爱过一个正当最好年龄的人。", author: "—— 沈从文" },
+        { text: "在青山绿水之间，我想牵着你的手，走过这座桥。桥上是绿叶红花，桥下是流水人家。", author: "—— 沈从文" },
+        { text: "当我跨过沉沦的一切，向着永恒开战的时候，你是我的军旗。", author: "—— 王小波" },
+        { text: "你不像任何人，因为我爱你。", author: "—— 聂鲁达" },
+        { text: "你微微地笑着，不同我说什么话，而我觉得，为了这个，我已等待得很久了。", author: "—— 泰戈尔" },
+        { text: "你是我一生中，只会遇见一次的惊喜。", author: "—— 佚名" },
+        { text: "你的名字，是我读过最短的情书。", author: "—— 佚名" },
+        { text: "见到你，我觉得多少适应了这个世界。", author: "—— 村上春树" },
+        { text: "和你在一起，我就没有羡慕过别人。", author: "—— 佚名" },
+        { text: "关关雎鸠，在河之洲。窈窕淑女，君子好逑。", author: "——《诗经·关雎》" },
+        { text: "执子之手，与子偕老。", author: "——《诗经·邶风·击鼓》" },
+        { text: "一日不见，如三秋兮。", author: "——《诗经·王风·采葛》" },
+        { text: "山有木兮木有枝，心悦君兮君不知。", author: "——《越人歌》" },
+        { text: "愿得一心人，白头不相离。", author: "—— 汉·卓文君《白头吟》" },
+        { text: "在天愿作比翼鸟，在地愿为连理枝。", author: "—— 唐·白居易《长恨歌》" },
+        { text: "曾经沧海难为水，除却巫山不是云。", author: "—— 唐·元稹《离思五首》" },
+        { text: "身无彩凤双飞翼，心有灵犀一点通。", author: "—— 唐·李商隐《无题》" },
+        { text: "相见时难别亦难，东风无力百花残。", author: "—— 唐·李商隐《无题》" },
+        { text: "春蚕到死丝方尽，蜡炬成灰泪始干。", author: "—— 唐·李商隐《无题》" },
+        { text: "两情若是久长时，又岂在朝朝暮暮。", author: "—— 宋·秦观《鹊桥仙》" },
+        { text: "衣带渐宽终不悔，为伊消得人憔悴。", author: "—— 宋·柳永《蝶恋花》" },
+        { text: "众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。", author: "—— 宋·辛弃疾《青玉案·元夕》" },
+        { text: "问世间，情为何物，直教生死相许。", author: "—— 金·元好问《摸鱼儿·雁丘词》" },
+        { text: "天涯地角有穷时，只有相思无尽处。", author: "—— 宋·晏殊《玉楼春》" },
+        { text: "花自飘零水自流，一种相思，两处闲愁。", author: "—— 宋·李清照《如梦令》" },
+        { text: "此情可待成追忆，只是当时已惘然。", author: "—— 唐·李商隐《锦瑟》" },
+        { text: "月上柳梢头，人约黄昏后。", author: "—— 宋·欧阳修《生查子·元夕》" },
+        { text: "愿我如星君如月，夜夜流光相皎洁。", author: "—— 宋·范成大《车遥遥篇》" },
+        { text: "平生不会相思，才会相思，便害相思。", author: "—— 元·徐再思《折桂令·春情》" },
+        { text: "相思本是无凭语，莫向花笺费泪行。", author: "—— 清·纳兰性德《虞美人》" },
+        { text: "若教眼底无离恨，不信人间有白头。", author: "—— 宋·辛弃疾《鹧鸪天》" },
+        { text: "多情自古伤离别，更那堪，冷落清秋节。", author: "—— 宋·柳永《雨霖铃》" },
+        { text: "人生若只如初见，何事秋风悲画扇。", author: "—— 清·纳兰性德《木兰花·拟古决绝词柬友》" },
+        { text: "君生我未生，我生君已老。君恨我生迟，我恨君生早。", author: "—— 唐·佚名《铜官窑瓷器题诗》" },
+        { text: "天不老，情难绝。心似双丝网，中有千千结。", author: "—— 宋·张先《千秋岁》" },
+        { text: "思君如满月，夜夜减清辉。", author: "—— 唐·张九龄《赋得自君之出矣》" },
+        { text: "花开堪折直须折，莫待无花空折枝。", author: "—— 唐·杜秋娘《金缕衣》" },
+        { text: "红豆生南国，春来发几枝。愿君多采撷，此物最相思。", author: "—— 唐·王维《相思》" },
+        { text: "欲将心事付瑶琴，知音少，弦断有谁听？", author: "—— 宋·岳飞《小重山》" },
+        { text: "晓看天色暮看云，行也思君，坐也思君。", author: "—— 明·唐寅《一剪梅》" },
+        { text: "只愿君心似我心，定不负相思意。", author: "—— 宋·李之仪《卜算子》" },
+        { text: "换我心，为你心，始知相忆深。", author: "—— 宋·顾敻《诉衷情》" },
+        { text: "一寸相思一寸灰。", author: "—— 唐·李商隐《无题》" },
+        { text: "玲珑骰子安红豆，入骨相思知不知？", author: "—— 唐·温庭筠《杨柳枝》" },
+        { text: "锦瑟无端五十弦，一弦一柱思华年。", author: "—— 唐·李商隐《锦瑟》" },
+        { text: "泪眼问花花不语，乱红飞过秋千去。", author: "—— 宋·欧阳修《蝶恋花》" },
+        { text: "此情无计可消除，才下眉头，却上心头。", author: "—— 宋·李清照《一剪梅》" },
+        { text: "相逢不语，一朵芙蓉著秋雨。", author: "—— 清·纳兰性德《采桑子》" },
+        { text: "莫道不销魂，帘卷西风，人比黄花瘦。", author: "—— 宋·李清照《醉花阴》" },
+        // 西方经典诗句 (30首)
+        { text: "Shall I compare thee to a summer’s day? Thou art more lovely and more temperate.", author: "—— 莎士比亚《十四行诗第18首》" },
+        { text: "My love is like a red, red rose, That’s newly sprung in June.", author: "—— 罗伯特·彭斯《我的爱人像红红的玫瑰》" },
+        { text: "If I know what love is, it is because of you.", author: "—— 赫尔曼·黑塞" },
+        { text: "I love you not only for what you are, but for what I am when I am with you.", author: "—— 罗伊·克罗夫特" },
+        { text: "You are my sun, my moon, and all my stars.", author: "—— E.E. Cummings" },
+        { text: "Love looks not with the eyes, but with the mind.", author: "—— 莎士比亚《仲夏夜之梦》" },
+        { text: "A heart that loves is always young.", author: "—— 希腊谚语" },
+        { text: "To love and be loved is to feel the sun from both sides.", author: "—— 大卫·维斯科特" },
+        { text: "I have loved the stars too fondly to be fearful of the night.", author: "—— 莎拉·威廉姆斯" },
+        { text: "Where there is love there is life.", author: "—— 甘地" },
+        { text: "The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart.", author: "—— 海伦·凯勒" },
+        { text: "I carry your heart with me (i carry it in my heart).", author: "—— E.E. Cummings" },
+        { text: "You are the answer to every prayer I’ve offered. You are a song, a dream, a whisper, and I don’t know how I could have lived without you for as long as I have.", author: "—— 尼古拉斯·斯帕克斯《恋恋笔记本》" },
+        { text: "I loved you yesterday, I love you still, I always have, I always will.", author: "—— 伊莱恩·戴维斯" },
+        { text: "I would rather have had one breath of her hair, one kiss from her mouth, one touch of her hand, than eternity without it.", author: "—— 电影《天使之城》" },
+        { text: "You are the poem I never knew how to write and this life is the story I have always wanted to tell.", author: "—— 泰勒·金" },
+        { text: "We loved with a love that was more than love.", author: "—— 爱伦·坡《安娜贝尔·李》" },
+        { text: "My bounty is as boundless as the sea, My love as deep; the more I give to thee, The more I have, for both are infinite.", author: "—— 莎士比亚《罗密欧与朱丽叶》" },
+        { text: "For you, a thousand times over.", author: "—— 卡勒德·胡赛尼《追风筝的人》" },
+        { text: "Love is composed of a single soul inhabiting two bodies.", author: "—— 亚里士多德" },
+        { text: "The course of true love never did run smooth.", author: "—— 莎士比亚《仲夏夜之梦》" },
+        { text: "I have found the one whom my soul loves.", author: "—— 《圣经·雅歌》" },
+        { text: "You are the finest, loveliest, tenderest, and most beautiful person I have ever known—and even that is an understatement.", author: "—— 菲茨杰拉德" },
+        { text: "I never loved you any more than I do, right this second. And I’ll never love you any less than I do, right this second.", author: "—— 卡米·加西亚" },
+        { text: "You are the best thing that’s ever been mine.", author: "—— 泰勒·斯威夫特" },
+        { text: "I swear I couldn’t love you more than I do right now, and yet I know I will tomorrow.", author: "—— 里奥·克里斯托弗" },
+        { text: "I’d choose you; in a hundred lifetimes, in a hundred worlds, in any version of reality, I’d find you and I’d choose you.", author: "—— 基尔斯蒂·莫斯" },
+        { text: "You are my favorite notification.", author: "—— 佚名" },
+        { text: "I want all of you, forever, you and me, every day.", author: "—— 尼古拉斯·斯帕克斯《恋恋笔记本》" },
+        { text: "I love you more than words can say.", author: "—— 佚名" }
+    ];
+
+    // 辅助函数
+    function daysBetween(a, b) {
+        return Math.round((b - a) / (24 * 60 * 60 * 1000));
+    }
+
+    function updateDates() {
+        const start = new Date(START_DATE);
+        start.setHours(0,0,0,0);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const total = daysBetween(start, today);
+        document.getElementById('totalDays').innerText = total + ' 天';
+
+        let next = new Date(today.getFullYear(), start.getMonth(), start.getDate());
+        if (next < today) next.setFullYear(today.getFullYear() + 1);
+        const toNext = daysBetween(today, next);
+        const msg = toNext === 0 ? "🎉 恋爱周年快乐！ 🎉" : `📅 距离恋爱周年还有 ${toNext} 天`;
+        document.getElementById('nextEvent').innerText = msg;
+    }
+
+    function getDailyPoem() {
+        const today = new Date().toISOString().slice(0,10);
+        let hash = 0;
+        for (let i = 0; i < today.length; i++) {
+            hash = ((hash << 5) - hash) + today.charCodeAt(i);
+            hash |= 0;
+        }
+        const idx = Math.abs(hash) % POEM_LIBRARY.length;
+        return POEM_LIBRARY[idx];
+    }
+
+    function updatePoem() {
+        const p = getDailyPoem();
+        document.getElementById('dailyPoem').innerHTML = `“${p.text}”`;
+        document.getElementById('poemAuthor').innerHTML = p.author;
+    }
+
+    function createHearts() {
+        const container = document.getElementById('floatingHearts');
+        for (let i = 0; i < 28; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = ['❤️','💖','💗','💓','🌸','🌹'][Math.floor(Math.random() * 6)];
+            heart.style.fontSize = (16 + Math.random() * 28) + 'px';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = 8 + Math.random() * 12 + 's';
+            heart.style.animationDelay = Math.random() * 15 + 's';
+            container.appendChild(heart);
+        }
+    }
+
+    function setupReset() {
+        const btn = document.getElementById('resetDemoBtn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const newDate = prompt("请输入新日期 (YYYY-MM-DD)", "2022-06-18");
+                if (newDate) {
+                    const parts = newDate.split('-');
+                    if (parts.length === 3) {
+                        const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+                        if (!isNaN(d.getTime())) {
+                            alert("演示版需手动修改代码中的 START_DATE 常量并刷新页面。\n当前仅支持在代码中修改。");
+                        } else { alert("日期无效"); }
+                    } else { alert("格式错误"); }
+                }
+            });
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        createHearts();
+        updateDates();
+        updatePoem();
+        setupReset();
+    });
+</script>
+</body>
+</html>
