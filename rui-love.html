@@ -2,64 +2,183 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>❤️ 我们的纪念日 · 每日情诗</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>💖 我们的恋爱纪念日</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { min-height:100vh; background: linear-gradient(135deg,#ff9a9e 0%,#fecfef 50%,#ffe6f0 100%); font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', sans-serif; padding:20px; position:relative; overflow-x:hidden; }
-        .floating-hearts { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
-        .heart { position:absolute; font-size:20px; color:rgba(255,80,120,0.3); animation:floatHeart linear infinite; bottom:-50px; }
-        @keyframes floatHeart { 0% { transform:translateY(0) rotate(0deg); opacity:0.6; } 100% { transform:translateY(-110vh) rotate(360deg); opacity:0; } }
-        .container { max-width:650px; margin:0 auto; background:rgba(255,255,255,0.92); border-radius:48px; box-shadow:0 25px 45px rgba(0,0,0,0.2); backdrop-filter:blur(2px); padding:30px 25px 45px; position:relative; z-index:2; }
-        .header { text-align:center; margin-bottom:25px; }
-        .couple-icon { font-size:60px; }
-        h1 { font-size:2.3rem; background:linear-gradient(135deg,#d14b6e,#ff8c9e); background-clip:text; -webkit-background-clip:text; color:transparent; margin:10px 0 5px; }
-        .sub { color:#c06c7a; font-size:0.9rem; border-top:1px solid #ffccd5; display:inline-block; padding-top:5px; }
-        .days-card { background:#fff0f3; border-radius:60px; padding:20px; margin:20px 0; text-align:center; box-shadow:0 8px 20px rgba(209,75,94,0.15); border:1px solid #ffe0e7; }
-        .days-number { font-size:4rem; font-weight:bold; color:#e35f7a; line-height:1; margin:5px 0; text-shadow:2px 2px 10px #ffb7c3; }
-        .days-label { font-size:1.2rem; color:#a54c5f; letter-spacing:2px; }
-        .event-date { margin-top:12px; color:#c0828f; font-size:0.9rem; }
-        .poem-section { background:#fffafc; border-radius:40px; padding:20px; margin:25px 0; border-left:8px solid #ff92ab; box-shadow:0 5px 12px rgba(0,0,0,0.05); }
-        .poem-title { font-size:1rem; color:#d1627c; display:flex; align-items:center; gap:8px; margin-bottom:15px; }
-        .poem-content { font-size:1.15rem; line-height:1.65; color:#2d2d2d; text-align:center; white-space:pre-line; }
-        .poem-author { text-align:right; margin-top:15px; color:#b27c88; font-size:0.85rem; border-top:1px dashed #ffe2e9; padding-top:10px; }
-        .settings { background:#fff5f7; border-radius:50px; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:15px; font-size:0.85rem; color:#c27485; }
-        .reset-btn { background:#ffb7c5; border:none; padding:6px 14px; border-radius:40px; color:#8f414f; cursor:pointer; font-size:0.8rem; transition:0.2s; font-weight:bold; }
-        .reset-btn:hover { background:#ff92ab; color:white; transform:scale(0.97); }
-        footer { text-align:center; margin-top:25px; font-size:0.7rem; color:#c48b98; }
-        @media (max-width:500px) { .days-number { font-size:3rem; } .poem-content { font-size:1rem; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 64px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #d14b6e, #ff8c9e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .days-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #e35f7a;
+            margin: 1rem 0 0.5rem;
+            text-shadow: 2px 2px 12px #ffb7c3;
+            line-height: 1.2;
+        }
+
+        .days-label {
+            font-size: 1.3rem;
+            color: #a54c5f;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .event-date {
+            font-size: 1rem;
+            color: #c0828f;
+            margin: 12px 0 0;
+        }
+
+        .poem-section {
+            background: #fffafc;
+            border-radius: 48px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #ff92ab;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+        }
+
+        .poem-content {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #2d2d2d;
+            font-style: normal;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .poem-author {
+            text-align: right;
+            margin-top: 16px;
+            color: #b27c88;
+            font-size: 0.9rem;
+            border-top: 1px dashed #ffe2e9;
+            padding-top: 12px;
+        }
+
+        button {
+            background: #ffb7c5;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #8f414f;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 220px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background: #ff92ab;
+            color: white;
+            transform: scale(0.97);
+        }
+
+        footer {
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: #c48b98;
+            text-align: center;
+        }
+
+        /* 手机全屏优化：增大点击区域，留白均匀 */
+        @media (max-width: 550px) {
+            body {
+                padding: 12px;
+            }
+            .card {
+                padding: 1.5rem 1.2rem;
+                border-radius: 48px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .days-number {
+                font-size: 3.4rem;
+            }
+            .days-label {
+                font-size: 1.1rem;
+            }
+            .poem-content {
+                font-size: 1.15rem;
+            }
+            button {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* 超小屏安全边距 */
+        @media (max-width: 380px) {
+            .poem-content {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="floating-hearts" id="floatingHearts"></div>
-<div class="container">
-    <div class="header">
-        <div class="couple-icon">👩‍❤️‍👨</div>
-        <h1>我们的心动纪念日</h1>
-        <div class="sub">✨ 每一天都值得庆祝 ✨</div>
-    </div>
-    <div class="days-card">
-        <div class="days-number" id="totalDays">--</div>
-        <div class="days-label">❤️ 相爱的日子 ❤️</div>
-        <div class="event-date" id="nextEvent">📅 计算中...</div>
-    </div>
-    <div class="poem-section">
-        <div class="poem-title"><span>🌸</span> 今日 · 为你写诗 <span>🌸</span></div>
-        <div class="poem-content" id="dailyPoem">遇见你，是我这一生最温柔的奇迹。</div>
-        <div class="poem-author" id="poemAuthor">—— 来自心间的句子</div>
-    </div>
-    <div class="settings">
-        <span>💌 每日随机情诗 · 爱你不止一天</span>
-        <button class="reset-btn" id="resetDemoBtn">🎂 修改纪念日</button>
-    </div>
-    <footer>🌟 每天打开都有新诗句 &nbsp;&nbsp;|&nbsp;&nbsp; 与你朝朝暮暮</footer>
-</div>
-<script>
-    // ================= 请在下面修改为你们的恋爱开始日期 =================
-    const START_DATE = new Date(2026, 1, 2);   // 格式：年, 月-1, 日 (例如 2022年6月18日)
+<div class="card">
+    <h1>❤️ 我们的心动纪念日 ❤️</h1>
+    <div class="days-number" id="totalDays">✨</div>
+    <div class="days-label">相爱的日子</div>
+    <div class="event-date" id="nextEvent"></div>
 
-    // 诗句库（共60首，语法完全正确，无多余逗号或括号）
+    <div class="poem-section">
+        <div class="poem-content" id="dailyPoem"></div>
+        <div class="poem-author" id="poemAuthor"></div>
+    </div>
+
+    <button id="refreshPoemBtn">🌸 换一句情诗 🌸</button>
+    <footer>每天打开都有新诗句 · 与你朝朝暮暮</footer>
+</div>
+
+<script>
+    // ================= 请修改为你们的恋爱开始日期 =================
+    const START_DATE = new Date(2026, 1, 2);   // 2022年6月18日 (月份 5 代表 6月)
+
+    // 诗句库（可自行增删）
     const POEM_LIBRARY = [
-        { text: "你是我的半截的诗，不许别人更改一个字。", author: "—— 海子" },
+         { text: "你是我的半截的诗，不许别人更改一个字。", author: "—— 海子" },
         { text: "我想和你一起生活，在某个小镇，共享无尽的黄昏，和绵绵不绝的钟声。", author: "—— 茨维塔耶娃" },
         { text: "一想到你，我这张丑脸上就泛起微笑。", author: "—— 王小波" },
         { text: "你是我温暖的手套，冰冷的啤酒，带着阳光味道的衬衫，日复一日的梦想。", author: "—— 廖一梅《恋爱的犀牛》" },
@@ -147,81 +266,48 @@
         { text: "I love you more than words can say.", author: "—— 佚名" }
     ];
 
-    // 辅助函数
+    // 工具函数：相差天数
     function daysBetween(a, b) {
-        return Math.round((b - a) / (24 * 60 * 60 * 1000));
+        return Math.floor((b - a) / (1000 * 60 * 60 * 24));
     }
 
-    function updateDates() {
+    // 更新纪念日天数及倒计时
+    function updateLoveDates() {
         const start = new Date(START_DATE);
         start.setHours(0,0,0,0);
         const today = new Date();
         today.setHours(0,0,0,0);
         const total = daysBetween(start, today);
-        document.getElementById('totalDays').innerText = total + ' 天';
+        document.getElementById('totalDays').innerHTML = total + '<span style="font-size:1.2rem;"> 天</span>';
 
-        let next = new Date(today.getFullYear(), start.getMonth(), start.getDate());
-        if (next < today) next.setFullYear(today.getFullYear() + 1);
-        const toNext = daysBetween(today, next);
-        const msg = toNext === 0 ? "🎉 恋爱周年快乐！ 🎉" : `📅 距离恋爱周年还有 ${toNext} 天`;
+        let nextAnn = new Date(today.getFullYear(), start.getMonth(), start.getDate());
+        if (nextAnn < today) nextAnn.setFullYear(today.getFullYear() + 1);
+        const daysLeft = daysBetween(today, nextAnn);
+        const msg = daysLeft === 0 ? "🎉 恋爱周年快乐！ 🎉" : `距离恋爱周年还有 ${daysLeft} 天`;
         document.getElementById('nextEvent').innerText = msg;
     }
 
-    function getDailyPoem() {
-        const today = new Date().toISOString().slice(0,10);
-        let hash = 0;
-        for (let i = 0; i < today.length; i++) {
-            hash = ((hash << 5) - hash) + today.charCodeAt(i);
-            hash |= 0;
-        }
-        const idx = Math.abs(hash) % POEM_LIBRARY.length;
+    // 获取随机诗句
+    function getRandomPoem() {
+        const idx = Math.floor(Math.random() * POEM_LIBRARY.length);
         return POEM_LIBRARY[idx];
     }
 
-    function updatePoem() {
-        const p = getDailyPoem();
-        document.getElementById('dailyPoem').innerHTML = `“${p.text}”`;
-        document.getElementById('poemAuthor').innerHTML = p.author;
+    // 刷新诗句显示
+    function refreshPoemDisplay() {
+        const poem = getRandomPoem();
+        document.getElementById('dailyPoem').innerHTML = `“${poem.text}”`;
+        document.getElementById('poemAuthor').innerHTML = poem.author;
     }
 
-    function createHearts() {
-        const container = document.getElementById('floatingHearts');
-        for (let i = 0; i < 28; i++) {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.innerHTML = ['❤️','💖','💗','💓','🌸','🌹'][Math.floor(Math.random() * 6)];
-            heart.style.fontSize = (16 + Math.random() * 28) + 'px';
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.animationDuration = 8 + Math.random() * 12 + 's';
-            heart.style.animationDelay = Math.random() * 15 + 's';
-            container.appendChild(heart);
-        }
+    // 初始化
+    function init() {
+        updateLoveDates();
+        refreshPoemDisplay();
+        document.getElementById('refreshPoemBtn').addEventListener('click', refreshPoemDisplay);
     }
 
-    function setupReset() {
-        const btn = document.getElementById('resetDemoBtn');
-        if (btn) {
-            btn.addEventListener('click', () => {
-                const newDate = prompt("请输入新日期 (YYYY-MM-DD)", "2022-06-18");
-                if (newDate) {
-                    const parts = newDate.split('-');
-                    if (parts.length === 3) {
-                        const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-                        if (!isNaN(d.getTime())) {
-                            alert("演示版需手动修改代码中的 START_DATE 常量并刷新页面。\n当前仅支持在代码中修改。");
-                        } else { alert("日期无效"); }
-                    } else { alert("格式错误"); }
-                }
-            });
-        }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        createHearts();
-        updateDates();
-        updatePoem();
-        setupReset();
-    });
+    init();
 </script>
 </body>
 </html>
