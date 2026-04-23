@@ -19,6 +19,39 @@
             justify-content: center;
             align-items: center;
             padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 漂浮爱心容器 */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 80, 120, 0.4);
+            animation: floatHeart linear infinite;
+            bottom: -50px;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         .card {
@@ -30,7 +63,8 @@
             backdrop-filter: blur(2px);
             padding: 2rem 1.5rem;
             text-align: center;
-            transition: all 0.2s ease;
+            position: relative;
+            z-index: 2;
         }
 
         h1 {
@@ -92,28 +126,6 @@
             padding-top: 12px;
         }
 
-        button {
-            background: #ffb7c5;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #8f414f;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 220px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-
-        button:hover {
-            background: #ff92ab;
-            color: white;
-            transform: scale(0.97);
-        }
-
         footer {
             margin-top: 24px;
             font-size: 0.75rem;
@@ -121,7 +133,7 @@
             text-align: center;
         }
 
-        /* 手机全屏优化：增大点击区域，留白均匀 */
+        /* 手机优化 */
         @media (max-width: 550px) {
             body {
                 padding: 12px;
@@ -142,21 +154,11 @@
             .poem-content {
                 font-size: 1.15rem;
             }
-            button {
-                padding: 12px 20px;
-                font-size: 0.95rem;
-            }
-        }
-
-        /* 超小屏安全边距 */
-        @media (max-width: 380px) {
-            .poem-content {
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
 <body>
+<div class="floating-hearts" id="floatingHearts"></div>
 <div class="card">
     <h1>❤️ 我们的心动纪念日 ❤️</h1>
     <div class="days-number" id="totalDays">✨</div>
@@ -168,17 +170,16 @@
         <div class="poem-author" id="poemAuthor"></div>
     </div>
 
-    <button id="refreshPoemBtn">🌸 换一句情诗 🌸</button>
-    <footer>每天打开都有新诗句 · 与你朝朝暮暮</footer>
+    <footer>🌸 柔情缱绻不绝 · 与你朝朝暮暮 🌸</footer>
 </div>
 
 <script>
     // ================= 请修改为你们的恋爱开始日期 =================
     const START_DATE = new Date(2026, 1, 2);   // 2022年6月18日 (月份 5 代表 6月)
 
-    // 诗句库（可自行增删）
+    // 诗句库（可自由增删）
     const POEM_LIBRARY = [
-         { text: "你是我的半截的诗，不许别人更改一个字。", author: "—— 海子" },
+        { text: "你是我的半截的诗，不许别人更改一个字。", author: "—— 海子" },
         { text: "我想和你一起生活，在某个小镇，共享无尽的黄昏，和绵绵不绝的钟声。", author: "—— 茨维塔耶娃" },
         { text: "一想到你，我这张丑脸上就泛起微笑。", author: "—— 王小波" },
         { text: "你是我温暖的手套，冰冷的啤酒，带着阳光味道的衬衫，日复一日的梦想。", author: "—— 廖一梅《恋爱的犀牛》" },
@@ -266,12 +267,12 @@
         { text: "I love you more than words can say.", author: "—— 佚名" }
     ];
 
-    // 工具函数：相差天数
+    // 计算天数
     function daysBetween(a, b) {
         return Math.floor((b - a) / (1000 * 60 * 60 * 24));
     }
 
-    // 更新纪念日天数及倒计时
+    // 更新纪念日
     function updateLoveDates() {
         const start = new Date(START_DATE);
         start.setHours(0,0,0,0);
@@ -287,27 +288,48 @@
         document.getElementById('nextEvent').innerText = msg;
     }
 
-    // 获取随机诗句
-    function getRandomPoem() {
-        const idx = Math.floor(Math.random() * POEM_LIBRARY.length);
+    // 每日随机诗句（基于日期，一天内不变，且无手动刷新按钮）
+    function getDailyPoem() {
+        const todayStr = new Date().toISOString().slice(0,10);
+        let hash = 0;
+        for (let i = 0; i < todayStr.length; i++) {
+            hash = ((hash << 5) - hash) + todayStr.charCodeAt(i);
+            hash |= 0;
+        }
+        const idx = Math.abs(hash) % POEM_LIBRARY.length;
         return POEM_LIBRARY[idx];
     }
 
-    // 刷新诗句显示
-    function refreshPoemDisplay() {
-        const poem = getRandomPoem();
+    function updatePoem() {
+        const poem = getDailyPoem();
         document.getElementById('dailyPoem').innerHTML = `“${poem.text}”`;
         document.getElementById('poemAuthor').innerHTML = poem.author;
     }
 
-    // 初始化
-    function init() {
-        updateLoveDates();
-        refreshPoemDisplay();
-        document.getElementById('refreshPoemBtn').addEventListener('click', refreshPoemDisplay);
+    // 生成漂浮爱心
+    function createFloatingHearts() {
+        const container = document.getElementById('floatingHearts');
+        if (!container) return;
+        const heartCount = 36;
+        for (let i = 0; i < heartCount; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = ['❤️', '💖', '💗', '💓', '🌸', '🌹'][Math.floor(Math.random() * 6)];
+            const size = 16 + Math.random() * 30;
+            heart.style.fontSize = size + 'px';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = 6 + Math.random() * 12 + 's';
+            heart.style.animationDelay = Math.random() * 15 + 's';
+            container.appendChild(heart);
+        }
     }
 
-    init();
+    // 页面加载
+    window.addEventListener('DOMContentLoaded', () => {
+        createFloatingHearts();
+        updateLoveDates();
+        updatePoem();
+    });
 </script>
 </body>
 </html>
